@@ -7,10 +7,9 @@ import React, { memo } from "react";
 
 const App = memo(() => {
   return (
-    <React.StrictMode>
-      <Header />
-      <Outlet />
-    </React.StrictMode>
+    
+      <><Header /><Outlet /></>
+    
   );
 });
 

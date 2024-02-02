@@ -16,10 +16,10 @@ const GlossaryCard = ({ glossary }) => {
 
   return (
     <Link to={`/glossary/${glossary_id}`}>
-      <div className="max-w-md mx-auto bg-white shadow-md overflow-hidden md:max-w-2xl mb-4">
+      <div className="max-w-md mx-auto bg-white shadow-md overflow-hidden md:max-w-2xl mb-4 hover:scale-110">
         <div className="md:flex">
           <div className="p-8">
-            <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
+            <div className="uppercase tracking-wide text-sm text-teal-400 font-semibold">
               {ready ? "Ready" : "Not Ready"}
             </div>
             {name}

@@ -38,6 +38,12 @@ const CreateGlossaryComponent = () => {
 
   const handleFileChange = (e) => {
     const uploadedFile = e.target.files[0];
+    if(!uploadedFile){
+      setGlossaryDetails((prevDetails) => ({
+        ...prevDetails,
+        entries: "",
+      }));
+    }
 
     if (uploadedFile) {
       const reader = new FileReader();
@@ -60,7 +66,7 @@ const CreateGlossaryComponent = () => {
       source_lang: glossaryDetails.sourceLang,
       target_lang: glossaryDetails.targetLang,
       entries_format: glossaryDetails.entriesFormat,
-      entries: formatFileContent(glossaryDetails.entries),
+      entries: glossaryDetails.entries ? formatFileContent(glossaryDetails.entries): '',
     };
 
     console.log(formData);
@@ -109,18 +115,18 @@ const CreateGlossaryComponent = () => {
     <>
       {isLoading && <LoadingIcon />}
       <div className="flex items-center justify-center min-h-screen">
-        <div className="w-96 p-8 bg-white rounded shadow-lg">
+        <div className="p-8 bg-white shadow-xl border-solid border-2 border-[#dddddd] rounded-[2rem]">
           <h2 className="text-2xl font-bold mb-4">Create Glossary</h2>
           <label className="block mb-4">
-            Glossary Name:
+            Glossary Name: <sup title="required">*</sup> 
             <input
               type="text"
               name="name"
               value={glossaryDetails.name}
               onChange={handleInputChange}
-              className="w-full mt-1 p-2 border rounded-md"
+              className="w-full mt-1 p-2 border rounded-md" required
             />
-          </label>
+         </label>
           <label className="block mb-4">
             Source Language:
             <select
@@ -162,22 +168,25 @@ const CreateGlossaryComponent = () => {
             />
           </label>
           <label className="block mb-4">
-            Upload CSV File:
+            Upload CSV File: <sup title="required">*</sup> 
             <input
               type="file"
               accept=".csv"
               onChange={handleFileChange}
-              className="mt-1 p-2 border rounded-md"
+              className="mt-1 p-2 border rounded-md" required
             />
           </label>
-          <button
+          <p class="text-xs text-red-500 text-right my-3">Required fields are marked with an
+									asterisk <sup title="Required field">*</sup></p>
+          <button disabled = {!(glossaryDetails.name && glossaryDetails.entries)} 
             onClick={handleCreateGlossary}
-            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 disabled:bg-blue-300"
           >
             Create Glossary
           </button>
         </div>
       </div>
+      
     </>
   );
 };
