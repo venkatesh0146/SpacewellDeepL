@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import config from "../config";
 import { saveAs } from "file-saver";
-import Modal from "./Modal";
 import LoadingIcon from "./LoadingIcon";
+import GlossaryForm from "./GlossaryForm";
 
 const ViewGlossaryComponent = () => {
   const { glossaryId } = useParams();
@@ -23,12 +23,15 @@ const ViewGlossaryComponent = () => {
   ].map((e) => e.toLocaleLowerCase());
 
   const [glossaryDetails, setGlossaryDetails] = useState(null);
+  
   const [editedDetails, setEditedDetails] = useState({
     name: "",
     sourceLang: "",
     targetLang: "",
+    entries: ""
   });
-  const [implEntriesString, setImplEntriesString] = useState("");
+
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [fileContent, setFileContent] = useState("");
 
@@ -39,7 +42,7 @@ const ViewGlossaryComponent = () => {
           `${config.baseUrl}/glossarydetails/${glossaryId}`
         );
         const responseData = await response.json();
-        setGlossaryDetails(responseData);
+       
         if (
           responseData &&
           responseData.entries &&
@@ -50,12 +53,14 @@ const ViewGlossaryComponent = () => {
           const entriesString = Object.entries(implEntries)
             .map(([source, target]) => `${source}\t${target}`)
             .join("\n");
-          setImplEntriesString(entriesString);
+          responseData.entriesString = entriesString
+          setGlossaryDetails(responseData);
         }
         setEditedDetails({
           name: responseData.name,
           sourceLang: responseData.source_lang,
           targetLang: responseData.target_lang,
+          entries: responseData.entriesString
         });
       } catch (error) {
         console.error("Error fetching glossary details:", error);
@@ -141,8 +146,12 @@ const ViewGlossaryComponent = () => {
         const entriesString = Object.entries(formattedContent)
           .map(([source, target]) => `${source}\t${target}`)
           .join("\n");
-        console.log(entriesString);
-        setImplEntriesString(entriesString);
+        setEditedDetails({
+          name: editedDetails.name,
+          sourceLang: editedDetails.source_lang,
+          targetLang: editedDetails.target_lang,
+          entries: entriesString
+        });
       };
       reader.readAsText(uploadedFile);
     }
@@ -165,112 +174,28 @@ const ViewGlossaryComponent = () => {
     console.log("File Content:", fileContent);
   }, [glossaryDetails, fileContent]);
 
+  const details = {
+    isNew: false,
+    glossaryDetails: editedDetails,
+    isDeleteModalOpen: isDeleteModalOpen,
+    parentFunctions: {
+      handleInputChange: handleInputChange,
+      handleUpdateGlossary: handleUpdateGlossary,
+      formatFileContent: formatFileContent,
+      handleFileChange: handleFileChange,
+      downloadCSV: downloadCSV,
+      confirmDelete: confirmDelete,
+      getAvailableLanguages: getAvailableLanguages,
+      handleDeleteGlossary: handleDeleteGlossary,
+      closeDeleteModal: closeDeleteModal,
+    },
+  };
+
   if (!glossaryDetails) {
     return <LoadingIcon />;
   }
 
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="w-96 p-8 bg-white rounded shadow-lg">
-        <h2 className="text-2xl font-bold mb-4">Edit Glossary</h2>
-        <form>
-          <label className="block mb-4">
-            Glossary Name:
-            <input
-              type="text"
-              name="name"
-              value={editedDetails.name}
-              onChange={handleInputChange}
-              className="w-full mt-1 p-2 border rounded-md"
-            />
-          </label>
-          <label className="block mb-4">
-            Source Language:
-            <select
-              name="sourceLang"
-              value={editedDetails.sourceLang}
-              onChange={handleInputChange}
-              className="w-full mt-1 p-2 border rounded-md"
-            >
-              {getAvailableLanguages(editedDetails.targetLang).map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block mb-4">
-            Target Language:
-            <select
-              name="targetLang"
-              value={editedDetails.targetLang}
-              onChange={handleInputChange}
-              className="w-full mt-1 p-2 border rounded-md"
-            >
-              {getAvailableLanguages(editedDetails.sourceLang).map((lang) => (
-                <option key={lang} value={lang}>
-                  {lang}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="mb-4">
-            <label className="block mb-2">Entries:</label>
-            <textarea
-              value={implEntriesString}
-              readOnly
-              className="w-full p-2 border rounded-md"
-              rows="4"
-              disabled
-            />
-          </div>
-          <div className="flex justify-end mb-2">
-            <a
-              href="#download"
-              onClick={downloadCSV}
-              className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
-            >
-              Download CSV
-            </a>
-          </div>
-          <label className="block mb-4">
-            Upload CSV File:
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileChange}
-              className="mt-1 p-2 border rounded-md"
-            />
-          </label>
-
-          <div className="flex justify-between">
-            <button
-              type="button"
-              onClick={handleUpdateGlossary}
-              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-            >
-              Update Glossary
-            </button>
-            <button
-              type="button"
-              onClick={handleDeleteGlossary}
-              className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
-            >
-              Delete Glossary
-            </button>
-          </div>
-        </form>
-        {isDeleteModalOpen && (
-          <Modal
-            title="Confirm Delete"
-            content="Are you sure you want to delete this glossary?"
-            onCancel={closeDeleteModal}
-            onConfirm={confirmDelete}
-          />
-        )}
-      </div>
-    </div>
-  );
+  return <GlossaryForm editedDetails={details} />;
 };
 
 export default ViewGlossaryComponent;
