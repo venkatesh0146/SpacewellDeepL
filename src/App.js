@@ -1,15 +1,16 @@
 import Header from "./components/Header";
 import { createBrowserRouter, Outlet } from "react-router-dom";
 import Home from "./components/Home";
-import ViewGlossaryComponent from "./components/ViewGlossaryComponent";
-import CreateGlossaryComponent from "./components/CreateGlossaryComponent";
+import GlossaryComponent from "./components/GlossaryComponent";
 import React, { memo } from "react";
+import DocumentTranslation from "./components/DocumentTranslation";
 
 const App = memo(() => {
   return (
-    
-      <><Header /><Outlet /></>
-    
+    <>
+      <Header />
+      <Outlet />
+    </>
   );
 });
 
@@ -24,11 +25,15 @@ const appRoute = createBrowserRouter([
       },
       {
         path: "/newglossary",
-        element: <CreateGlossaryComponent />,
+        element: <GlossaryComponent isCreateMode={true} />,
+      },
+      {
+        path: "/translate",
+        element: <DocumentTranslation />,
       },
       {
         path: "/glossary/:glossaryId",
-        element: <ViewGlossaryComponent />,
+        element: <GlossaryComponent isCreateMode={false} />,
       },
     ],
   },

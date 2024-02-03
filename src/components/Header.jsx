@@ -14,6 +14,12 @@ const Header = () => {
         >
           Create New Glossary
         </Link>
+        <Link
+          className="  hover:text-teal-400 rounded-lg border-black-500 p-2"
+          to={"translate"}
+        >
+          Translate Document
+        </Link>
       </div>
     </div>
   );
