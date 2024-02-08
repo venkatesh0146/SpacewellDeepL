@@ -12,7 +12,7 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // Replace 'YOUR_DEEPL_API_KEY' with your actual DeepL API key
-const deepLApiKey = require("./env.js");
+const deepLApiKey = process.env.key;
 const translator = new DeepL.Translator(deepLApiKey);
 
 // Error Handling Middleware
