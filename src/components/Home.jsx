@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import GlossaryCard from "./GlossaryCard";
 import { Link } from "react-router-dom";
 import LoadingIcon from "./LoadingIcon";
+import config from "../config";
 
 const Home = () => {
   const [glossaries, setGlossaries] = useState([]);
@@ -12,7 +13,7 @@ const Home = () => {
   useEffect(() => {
     setIsLoading(true);
   
-    fetch("http://localhost:3001/allglossary")
+    fetch(config.baseUrl+"/allglossary")
       .then((response) => response.json())
       .then((data) => {setGlossaries(data.glossaries);  setFilteredGlossaries(data.glossaries)})
       .then(() => setIsLoading(false))
