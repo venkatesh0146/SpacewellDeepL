@@ -1,5 +1,5 @@
 const config = {
-  baseUrl: "http://localhost:3001",
+  baseUrl: "https://spacewell-deepl.onrender.com",
   supportedLanguages: [
     "DE",
     "EN",
